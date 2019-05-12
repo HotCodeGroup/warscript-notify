@@ -25,6 +25,14 @@ var authGPRC models.AuthClient
 var logger *logrus.Logger
 
 func main() {
+	h = &hub{
+		sessions:   make(map[int64]map[string]chan *HubMessage),
+		broadcast:  make(chan *HubMessage),
+		register:   make(chan *HubClient),
+		unregister: make(chan *HubClient),
+	}
+	go h.run()
+
 	// коннекстим логер
 	var err error
 	logger, err = logging.NewLogger(os.Stdout, os.Getenv("LOGENTRIESRUS_TOKEN"))
