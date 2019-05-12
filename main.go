@@ -128,7 +128,7 @@ func main() {
 	//	http.Handle("/metrics", promhttp.Handler())
 	http.Handle("/", middlewares.RecoverMiddleware(middlewares.AccessLogMiddleware(r, logger), logger))
 
-	logger.Infof("Games HTTP service successfully started at port %d", httpPort)
+	logger.Infof("Match HTTP service successfully started at port %d", httpPort)
 	err = http.ListenAndServe(":"+strconv.Itoa(httpPort), nil)
 	if err != nil {
 		logger.Errorf("cant start main server. err: %s", err.Error())

@@ -17,5 +17,5 @@ func (gm *NotifyManager) SendNotify(ctx context.Context, m *models.Message) (*mo
 		Body:     m.Body,
 	}
 
-	return nil, nil
+	return &models.Empty{}, nil
 }
