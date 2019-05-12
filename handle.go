@@ -31,7 +31,6 @@ func OpenWS(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	gameSlug := r.URL.Query().Get("game_slug")
 	upgrader := websocket.Upgrader{
 		CheckOrigin: func(r *http.Request) bool {
 			return true // мы уже прошли слой CORS
@@ -46,8 +45,7 @@ func OpenWS(w http.ResponseWriter, r *http.Request) {
 	sessionID := uuid.New().String()
 	verifyClient := &HubClient{
 		SessionID: sessionID,
-		//UserID:    1,
-		GameSlug: gameSlug,
+		UserID:    info.ID,
 
 		h:       h,
 		conn:    c,

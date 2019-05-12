@@ -16,7 +16,6 @@ const (
 type HubClient struct {
 	SessionID string
 	UserID    int64
-	GameSlug  string
 
 	h       *hub
 	conn    *websocket.Conn

@@ -26,10 +26,6 @@ func (h *hub) unregisterClient(client *HubClient) {
 			close(client.send)
 		}
 
-		if len(h.sessions[client.UserID][client.GameSlug]) == 0 {
-			delete(h.sessions[client.UserID], client.GameSlug)
-		}
-
 		if len(h.sessions[client.UserID]) == 0 {
 			delete(h.sessions, client.UserID)
 		}
