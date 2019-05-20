@@ -1,6 +1,6 @@
 # Warscript Notify
 
-[![rcard](https://goreportcard.com/badge/github.com/HotCodeGroup/warscript-notify )](https://goreportcard.com/report/github.com/HotCodeGroup/warscript-notify)
+[![rcard](https://goreportcard.com/badge/github.com/HotCodeGroup/warscript-notify?service=github)](https://goreportcard.com/report/github.com/HotCodeGroup/warscript-notify)
 
 🔔 Microservice for notifications
 
