@@ -6,8 +6,10 @@ import (
 	"github.com/HotCodeGroup/warscript-utils/models"
 )
 
+// NotifyManager реализации интерфеса gRPC сервера.
 type NotifyManager struct{}
 
+// SendNotify отправлка уведомления пользователю, полученного из другого сервера
 func (gm *NotifyManager) SendNotify(ctx context.Context, m *models.Message) (*models.Empty, error) {
 
 	h.broadcast <- &HubMessage{

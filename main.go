@@ -24,6 +24,7 @@ import (
 var authGPRC models.AuthClient
 var logger *logrus.Logger
 
+//nolint: gocyclo
 func main() {
 	h = &hub{
 		sessions:   make(map[int64]map[string]chan *HubMessage),
@@ -118,8 +119,8 @@ func main() {
 	models.RegisterNotifyServer(serverGRPCNotify, notify)
 	logger.Infof("Notify gRPC service successfully started at port %d", grpcPort)
 	go func() {
-		if err := serverGRPCNotify.Serve(listenGRPCPort); err != nil {
-			logger.Fatalf("Notify gRPC service failed at port %d", grpcPort)
+		if startErr := serverGRPCNotify.Serve(listenGRPCPort); startErr != nil {
+			logger.Fatalf("Notify gRPC service failed at port %d: %v", grpcPort, startErr)
 			os.Exit(1)
 		}
 	}()
@@ -128,15 +129,9 @@ func main() {
 	r := mux.NewRouter().PathPrefix("/v1").Subrouter()
 
 	r.HandleFunc("/connect", middlewares.WithAuthentication(OpenWS, logger, authGPRC)).Methods("GET")
-	// r.HandleFunc("/games", GetGameList).Methods("GET")
-	// r.HandleFunc("/games/{game_slug}", GetGame).Methods("GET")
-	// r.HandleFunc("/games/{game_slug}/leaderboard", GetGameLeaderboard).Methods("GET")
-	// r.HandleFunc("/games/{game_slug}/leaderboard/count", GetGameTotalPlayers).Methods("GET")
-
-	//	http.Handle("/metrics", promhttp.Handler())
 	http.Handle("/", middlewares.RecoverMiddleware(middlewares.AccessLogMiddleware(r, logger), logger))
 
-	logger.Infof("Match HTTP service successfully started at port %d", httpPort)
+	logger.Infof("Notify HTTP service successfully started at port %d", httpPort)
 	err = http.ListenAndServe(":"+strconv.Itoa(httpPort), nil)
 	if err != nil {
 		logger.Errorf("cant start main server. err: %s", err.Error())

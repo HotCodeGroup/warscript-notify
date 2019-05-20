@@ -13,6 +13,7 @@ const (
 	pingPeriod = (pongWait * 9) / 10
 )
 
+// HubClient представляет ws клиента, подключенного к хабу
 type HubClient struct {
 	SessionID string
 	UserID    int64
@@ -23,6 +24,7 @@ type HubClient struct {
 	filters []func(*HubMessage) bool
 }
 
+// WaitForClose отключает клиента от хаба, при закрытии ws
 func (bv *HubClient) WaitForClose() {
 	logger := log.WithFields(log.Fields{
 		"ws_session": bv.SessionID,
@@ -45,6 +47,7 @@ func (bv *HubClient) WaitForClose() {
 	}
 }
 
+// WriteStatusUpdates отправляет клиенту нотификации по ws
 func (bv *HubClient) WriteStatusUpdates() {
 	logger := log.WithFields(log.Fields{
 		"ws_session": bv.SessionID,

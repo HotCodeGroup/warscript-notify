@@ -11,6 +11,7 @@ import (
 	"github.com/pkg/errors"
 )
 
+// SessionInfo получает информацию о сессии из контекста запроса
 func SessionInfo(r *http.Request) *models.SessionPayload {
 	if rv := r.Context().Value(middlewares.SessionInfoKey); rv != nil {
 		if rInfo, ok := rv.(*models.SessionPayload); ok {
@@ -21,6 +22,7 @@ func SessionInfo(r *http.Request) *models.SessionPayload {
 	return nil
 }
 
+// OpenWS создаёт ws клиент, который подключает к hub
 func OpenWS(w http.ResponseWriter, r *http.Request) {
 	logger := utils.GetLogger(r, logger, "OpenWS")
 	errWriter := utils.NewErrorResponseWriter(w, logger)
