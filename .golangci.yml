@@ -1,0 +1,31 @@
+linters-settings:
+  govet:
+    check-shadowing: true
+  golint:
+    min-confidence: 0
+  gocyclo:
+    min-complexity: 10
+  dupl:
+    threshold: 100
+  goconst:
+    min-len: 2
+    min-occurrences: 3
+  misspell:
+    locale: US
+  lll:
+    line-length: 120
+  goimports:
+    local-prefixes: github.com/HotCodeGroup/warscript-notify
+  gocritic:
+    enabled-tags:
+      - performance
+      - style
+      - experimental
+linters:
+  enable-all: true
+  disable:
+    - depguard
+    - maligned
+    - prealloc
+    - gochecknoglobals
+    - gochecknoinits
