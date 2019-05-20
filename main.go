@@ -18,9 +18,12 @@ import (
 
 	"github.com/sirupsen/logrus"
 
+	vk "github.com/GDVFox/vkbot-go"
 	consulapi "github.com/hashicorp/consul/api"
+	vaultapi "github.com/hashicorp/vault/api"
 )
 
+var notifyVKBot vk.VkBot
 var authGPRC models.AuthClient
 var logger *logrus.Logger
 
@@ -51,11 +54,37 @@ func main() {
 		return
 	}
 
+	// коннектим волт
+	vaultConfig := vaultapi.DefaultConfig()
+	vaultConfig.Address = os.Getenv("VAULT_ADDR")
+	vault, err := vaultapi.NewClient(vaultConfig)
+	if err != nil {
+		logger.Errorf("can not connect vault service: %s", err)
+		return
+	}
+	vault.SetToken(os.Getenv("VAULT_TOKEN"))
+
+	vkConf, err := vault.Logical().Read("warscript-notify/vk")
+	if err != nil || vkConf == nil || len(vkConf.Warnings) != 0 {
+		logger.Errorf("can read warscript-games/postges key: %+v; %+v", err, vkConf)
+		return
+	}
+
 	httpPort, grpcPort, err := balancer.GetPorts("warscript-notify/bounds", "warscript-notify", consul)
 	if err != nil {
 		logger.Errorf("can not find empry port: %s", err)
 		return
 	}
+
+	notifyVKBot, err := vk.NewVkBot(vkConf.Data["token"].(string), vkConf.Data["version"].(string), &http.Client{})
+	if err != nil {
+		logger.Errorf("can not find empry port: %s", err)
+		return
+	}
+	notifyVKBot.SetConfirmation(
+		vk.NewConfirmation("/confirmation", vkConf.Data["token"].(int64), vkConf.Data["confirmation"].(string)))
+	events := notifyVKBot.ListenForEvents()
+	go ProcessVKEvents(events)
 
 	// коннектимся к серверу warscript-users по grpc
 	authGPRCConn, err := balancer.ConnectClient(consul, "warscript-users-grpc")
