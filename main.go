@@ -27,7 +27,7 @@ import (
 )
 
 var rediCli *redis.Client
-var notifyVKBot vk.VkBot
+var notifyVKBot *vk.VkBot
 var authGPRC models.AuthClient
 var logger *logrus.Logger
 
@@ -86,7 +86,7 @@ func main() {
 		return
 	}
 
-	notifyVKBot, err := vk.NewVkBot(vkConf.Data["token"].(string), vkConf.Data["version"].(string), &http.Client{})
+	notifyVKBot, err = vk.NewVkBot(vkConf.Data["token"].(string), vkConf.Data["version"].(string), &http.Client{})
 	if err != nil {
 		logger.Errorf("can not create vk bot: %s", err)
 		return
