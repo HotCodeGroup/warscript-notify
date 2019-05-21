@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"math/rand"
 
 	"github.com/HotCodeGroup/warscript-utils/models"
@@ -36,17 +37,20 @@ func ProcessVKEvents(events vk.EventsChannel) {
 			continue
 		}
 
-		_, err = authGPRC.GetUserBySecret(context.Background(), &models.VkSecret{VkSecret: message.Text})
+		userInfo, err := authGPRC.GetUserBySecret(context.Background(), &models.VkSecret{VkSecret: message.Text})
 		if err != nil {
 			logger.Warnf("can not get information about user by secret")
-			err = SendMessageToPeer("Либо у нас что-то не работает, либо неправильный токен."+
+			err = SendMessageToPeer("Либо у нас что-то не работает, либо неправильный токен. "+
 				"Сорян, нам очень жаль. ¯\\_(ツ)_/¯", message.PeerID)
 			if err != nil {
 				logger.Warnf("can not send sorry message")
 			}
+			continue
 		}
 
-		logger.Infof("[%s] FROM %d; PEER %d; MSG_ID %d: %s", event.Type, message.FromID,
-			message.PeerID, message.ConversationMessageID, message.Text)
+		err = SendMessageToPeer(fmt.Sprintf("Ну всё, я тебя запомнил, %s!", userInfo.Username), message.PeerID)
+		if err != nil {
+			logger.Warnf("can not send sorry message")
+		}
 	}
 }
