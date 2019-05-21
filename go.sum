@@ -4,6 +4,10 @@ github.com/GDVFox/vkbot-go v0.0.0-20190204162326-81f90eb179b2 h1:ZYDBJU/1DHS04j/
 github.com/GDVFox/vkbot-go v0.0.0-20190204162326-81f90eb179b2/go.mod h1:AsvcIEChQxR9E2+74w/Cyk1nW4xWXfl//oqwJukihE8=
 github.com/HotCodeGroup/warscript-utils v0.0.0-20190512124807-e73b9b79228f h1:FWEt4v9q3TEb7mtjFeHzW6bVFAOeNWKwvMzTnFBmNVY=
 github.com/HotCodeGroup/warscript-utils v0.0.0-20190512124807-e73b9b79228f/go.mod h1:3wXifW8LqBmbXZkEu1LvycQ0RzCOrjHSYgQejGw0BvY=
+github.com/HotCodeGroup/warscript-utils v0.0.0-20190521082249-958f8aa86c74 h1:15uB1MiRdxBp+H499TMHof82qMFqUrlf7t8+zSDdibE=
+github.com/HotCodeGroup/warscript-utils v0.0.0-20190521082249-958f8aa86c74/go.mod h1:3wXifW8LqBmbXZkEu1LvycQ0RzCOrjHSYgQejGw0BvY=
+github.com/HotCodeGroup/warscript-utils v0.0.0-20190521110249-bd01ffff9945 h1:7Gs6S7TP0fHhsJiDkZGlzLejbIsbTDQkMDCBgBifH6w=
+github.com/HotCodeGroup/warscript-utils v0.0.0-20190521110249-bd01ffff9945/go.mod h1:3wXifW8LqBmbXZkEu1LvycQ0RzCOrjHSYgQejGw0BvY=
 github.com/PuerkitoBio/goquery v1.5.0 h1:uGvmFXOA73IKluu/F84Xd1tt/z07GYm8X49XKHP7EJk=
 github.com/PuerkitoBio/goquery v1.5.0/go.mod h1:qD2PgZ9lccMbQlc7eEOjaeRlFQON7xY8kdmcsrnKqMg=
 github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc h1:cAKDfWh5VpdgMhJosfJnn5/FoN2SRZ4p7fJNX58YPaU=
@@ -28,6 +32,7 @@ github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSs
 github.com/fatih/color v1.7.0/go.mod h1:Zm6kSWBoL9eyXnKyktHP6abPY2pDugNf5KwzbycvMj4=
 github.com/fatih/structs v1.1.0/go.mod h1:9NiDSp5zOcgEDl+j00MP/WkGVPOlPRLejGD8Ga6PJ7M=
 github.com/go-ldap/ldap v3.0.2+incompatible/go.mod h1:qfd9rJvER9Q0/D/Sqn1DfHRoBp40uXYvFoEVrNEPqRc=
+github.com/go-redis/redis v6.15.2+incompatible h1:9SpNVG76gr6InJGxoZ6IuuxaCOQwDAhzyXg+Bs+0Sb4=
 github.com/go-redis/redis v6.15.2+incompatible/go.mod h1:NAIEuMOZ/fxfXJIrKDQDz8wamY7mA7PouImQ2Jvg6kA=
 github.com/go-test/deep v1.0.1/go.mod h1:wGDj63lr65AM2AQyKZd/NYHGb0R+1RLqB8NKt3aSFNA=
 github.com/gogo/protobuf v1.2.1/go.mod h1:hp+jE20tsWTFYpLwKvXlhS1hjn+gTNwPg2I6zVXpSg4=

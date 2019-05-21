@@ -29,3 +29,6 @@ linters:
     - prealloc
     - gochecknoglobals
     - gochecknoinits
+run:
+  skip-files:
+    - test/test.go

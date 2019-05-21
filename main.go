@@ -8,12 +8,15 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/go-redis/redis"
+
 	"github.com/gorilla/mux"
 
 	"github.com/HotCodeGroup/warscript-utils/balancer"
 	"github.com/HotCodeGroup/warscript-utils/logging"
 	"github.com/HotCodeGroup/warscript-utils/middlewares"
 	"github.com/HotCodeGroup/warscript-utils/models"
+	redisUtils "github.com/HotCodeGroup/warscript-utils/redis"
 	"google.golang.org/grpc"
 
 	"github.com/sirupsen/logrus"
@@ -23,6 +26,7 @@ import (
 	vaultapi "github.com/hashicorp/vault/api"
 )
 
+var rediCli *redis.Client
 var notifyVKBot vk.VkBot
 var authGPRC models.AuthClient
 var logger *logrus.Logger
@@ -70,21 +74,42 @@ func main() {
 		return
 	}
 
-	httpPort, grpcPort, err := balancer.GetPorts("warscript-notify/bounds", "warscript-notify", consul)
+	groupID, err := strconv.ParseInt(vkConf.Data["group_id"].(string), 10, 64)
 	if err != nil {
-		logger.Errorf("can not find empry port: %s", err)
+		logger.Errorf("can not parse vk bot group ID: %s", err)
+		return
+	}
+
+	redisConf, err := vault.Logical().Read("warscript-notify/redis")
+	if err != nil || redisConf == nil || len(redisConf.Warnings) != 0 {
+		logger.Errorf("can read config/redis key: %s; %+v", err, redisConf.Warnings)
 		return
 	}
 
 	notifyVKBot, err := vk.NewVkBot(vkConf.Data["token"].(string), vkConf.Data["version"].(string), &http.Client{})
 	if err != nil {
-		logger.Errorf("can not find empry port: %s", err)
+		logger.Errorf("can not create vk bot: %s", err)
 		return
 	}
 	notifyVKBot.SetConfirmation(
-		vk.NewConfirmation("/confirmation", vkConf.Data["token"].(int64), vkConf.Data["confirmation"].(string)))
+		vk.NewConfirmation("/vk", groupID, vkConf.Data["confirmation"].(string)))
 	events := notifyVKBot.ListenForEvents()
 	go ProcessVKEvents(events)
+
+	rediCli, err = redisUtils.Connect(redisConf.Data["user"].(string),
+		redisConf.Data["pass"].(string), redisConf.Data["addr"].(string),
+		redisConf.Data["database"].(string))
+	if err != nil {
+		logger.Errorf("can not connect redis: %s", err)
+		return
+	}
+	defer rediCli.Close()
+
+	httpPort, grpcPort, err := balancer.GetPorts("warscript-notify/bounds", "warscript-notify", consul)
+	if err != nil {
+		logger.Errorf("can not find empry port: %s", err)
+		return
+	}
 
 	// коннектимся к серверу warscript-users по grpc
 	authGPRCConn, err := balancer.ConnectClient(consul, "warscript-users-grpc")

@@ -31,6 +31,7 @@ func main() {
 	)
 
 	if err != nil {
-		log.Fatalf("send err: %v", err)
+		log.Printf("send err: %v", err)
+		return
 	}
 }
