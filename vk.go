@@ -16,6 +16,11 @@ import (
 	vk "github.com/GDVFox/vkbot-go"
 )
 
+var (
+	connectCommand = "connect"
+	stopCommand    = "stop"
+)
+
 // UserNotifyInfo информация, которая хранится в Redis
 type UserNotifyInfo struct {
 	Peers map[int64]struct{} `json:"peers"`
@@ -214,14 +219,17 @@ func ProcessVKEvents(events vk.EventsChannel) {
 		command := ""
 		secret := ""
 		words := strings.Split(message.Text, " ")
-		if len(words) != 2 || (words[0] != "connect" && words[0] != "stop") {
+
+		if len(words) == 1 {
+			command, secret = connectCommand, words[0]
+		} else if len(words) == 2 && (words[0] == connectCommand || words[0] == stopCommand) {
+			command, secret = words[0], words[1]
+		} else {
 			err = SendMessageToPeer("Первый раз слышу такую команду. ¯\\_(ツ)_/¯", message.PeerID)
 			if err != nil {
 				logger.Warnf("can not send get user sorry message: %v", err)
 			}
 			continue
-		} else {
-			command, secret = words[0], words[1]
 		}
 
 		userInfo, err := authGPRC.GetUserBySecret(context.Background(), &models.VkSecret{VkSecret: secret})
@@ -235,7 +243,7 @@ func ProcessVKEvents(events vk.EventsChannel) {
 			continue
 		}
 
-		if command == "connect" {
+		if command == connectCommand {
 			if err = ConnectPeerToUser(userInfo.ID, message.PeerID); err != nil {
 				logger.Warnf("can not update userID peer information: %v", err)
 				err = SendMessageToPeer(fmt.Sprintf("Я тебя узнал, %s, но запомнить не вышло. :(\n"+
@@ -247,11 +255,11 @@ func ProcessVKEvents(events vk.EventsChannel) {
 			}
 
 			err = SendMessageToPeer(fmt.Sprintf("Ну всё, я тебя запомнил, %s!\n"+
-				"(\"stop %s\" чтобы отключится)", userInfo.Username, secret), message.PeerID)
+				"(\"%s %s\" чтобы отключится)", userInfo.Username, stopCommand, secret), message.PeerID)
 			if err != nil {
 				logger.Warnf("can not send sorry message")
 			}
-		} else if command == "stop" {
+		} else if command == stopCommand {
 			if err = DisconnectPeerToUser(userInfo.ID, message.PeerID); err != nil {
 				logger.Warnf("can not remove userID peer information: %v", err)
 				err = SendMessageToPeer(fmt.Sprintf("Ты такой классный, %s. У меня не получается тебя забыть. :(\n"+
@@ -263,7 +271,7 @@ func ProcessVKEvents(events vk.EventsChannel) {
 			}
 
 			err = SendMessageToPeer(fmt.Sprintf("Вот мы и остались друзьями, %s!\n"+
-				"(\"connect %s\" чтобы получать уведомления снова)", userInfo.Username, secret), message.PeerID)
+				"(\"%s %s\" чтобы получать уведомления снова)", userInfo.Username, connectCommand, secret), message.PeerID)
 			if err != nil {
 				logger.Warnf("can not send sorry message")
 			}
