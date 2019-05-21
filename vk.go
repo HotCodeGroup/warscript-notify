@@ -38,7 +38,7 @@ func GetPeerByUser(userID int64) (*UserNotifyInfo, error) {
 		return nil, errors.Wrap(err, "can not get value by key")
 	}
 
-	var updatedInfo *UserNotifyInfo
+	updatedInfo := &UserNotifyInfo{}
 	if err = json.Unmarshal(data, updatedInfo); err != nil {
 		return nil, errors.Wrap(err, "can not unmarshal data by user id")
 	}
@@ -64,6 +64,7 @@ func ConnectPeerToUser(userID, peerID int64) error {
 		}
 	} else {
 		if data != nil {
+			updatedInfo = &UserNotifyInfo{}
 			if err = json.Unmarshal(data, updatedInfo); err != nil {
 				return errors.Wrap(err, "can not unmarshal data by user id")
 			}
