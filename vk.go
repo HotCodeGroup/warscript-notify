@@ -62,12 +62,13 @@ func ConnectPeerToUser(userID, peerID int64) error {
 		} else {
 			return errors.Wrap(err, "can not get data by user id")
 		}
-	}
-	if data != nil {
-		if err = json.Unmarshal(data, updatedInfo); err != nil {
-			return errors.Wrap(err, "can not unmarshal data by user id")
+	} else {
+		if data != nil {
+			if err = json.Unmarshal(data, updatedInfo); err != nil {
+				return errors.Wrap(err, "can not unmarshal data by user id")
+			}
+			updatedInfo.AddPeer(peerID)
 		}
-		updatedInfo.AddPeer(peerID)
 	}
 
 	newData, err := json.Marshal(updatedInfo)
@@ -186,6 +187,7 @@ func ProcessVKEvents(events vk.EventsChannel) {
 			if err != nil {
 				logger.Warnf("can not send update sorry message: %v", err)
 			}
+			continue
 		}
 
 		err = SendMessageToPeer(fmt.Sprintf("Ну всё, я тебя запомнил, %s!", userInfo.Username), message.PeerID)
