@@ -47,6 +47,8 @@ func (h *hub) run() {
 					}
 				}
 			} else {
+				// параллельно запускаем отправку в вк
+				go ProcessMessageForVK(message)
 				for _, s := range h.sessions[message.AuthorID] {
 					s <- message
 				}
