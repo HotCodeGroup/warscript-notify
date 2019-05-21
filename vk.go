@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"math/rand"
 	"strconv"
+	"strings"
 	"sync"
 
 	"github.com/HotCodeGroup/warscript-utils/models"
@@ -70,6 +71,46 @@ func ConnectPeerToUser(userID, peerID int64) error {
 			}
 			updatedInfo.AddPeer(peerID)
 		}
+	}
+
+	newData, err := json.Marshal(updatedInfo)
+	if err != nil {
+		return errors.Wrap(err, "can not marshal new info")
+	}
+
+	if err = rediCli.Set(redisKey, newData, 0).Err(); err != nil {
+		return errors.Wrap(err, "can not set new data")
+	}
+
+	return nil
+}
+
+// DisconnectPeerToUser убираем из базы связь между userID и peerID
+func DisconnectPeerToUser(userID, peerID int64) error {
+	redisKey := strconv.FormatInt(userID, 10)
+
+	data, err := rediCli.Get(redisKey).Bytes()
+	if err != nil {
+		if err == redis.Nil {
+			return nil
+		}
+
+		return errors.Wrap(err, "can not get data by user id")
+	}
+
+	updatedInfo := &UserNotifyInfo{}
+	if err = json.Unmarshal(data, updatedInfo); err != nil {
+		return errors.Wrap(err, "can not unmarshal data by user id")
+	}
+	updatedInfo.RemovePeer(peerID)
+
+	if len(updatedInfo.Peers) == 0 {
+		err = rediCli.Del(redisKey).Err()
+		if err != nil {
+			return errors.Wrap(err, "redis delete error")
+		}
+
+		return nil
 	}
 
 	newData, err := json.Marshal(updatedInfo)
@@ -170,7 +211,20 @@ func ProcessVKEvents(events vk.EventsChannel) {
 			continue
 		}
 
-		userInfo, err := authGPRC.GetUserBySecret(context.Background(), &models.VkSecret{VkSecret: message.Text})
+		command := ""
+		secret := ""
+		words := strings.Split(message.Text, " ")
+		if len(words) != 2 || (words[0] != "connect" && words[0] != "stop") {
+			err = SendMessageToPeer("Первый раз слышу такую команду. ¯\\_(ツ)_/¯", message.PeerID)
+			if err != nil {
+				logger.Warnf("can not send get user sorry message: %v", err)
+			}
+			continue
+		} else {
+			command, secret = words[0], words[1]
+		}
+
+		userInfo, err := authGPRC.GetUserBySecret(context.Background(), &models.VkSecret{VkSecret: secret})
 		if err != nil {
 			logger.Warnf("can not get information about user by secret: %v", err)
 			err = SendMessageToPeer("Либо у нас что-то не работает, либо неправильный токен.\n"+
@@ -181,19 +235,38 @@ func ProcessVKEvents(events vk.EventsChannel) {
 			continue
 		}
 
-		if err = ConnectPeerToUser(userInfo.ID, message.PeerID); err != nil {
-			logger.Warnf("can not update userID peer information: %v", err)
-			err = SendMessageToPeer(fmt.Sprintf("Я тебя узнал, %s, но запомнить не вышло. :(\n"+
-				"Давай в другой раз.", userInfo.Username), message.PeerID)
-			if err != nil {
-				logger.Warnf("can not send update sorry message: %v", err)
+		if command == "connect" {
+			if err = ConnectPeerToUser(userInfo.ID, message.PeerID); err != nil {
+				logger.Warnf("can not update userID peer information: %v", err)
+				err = SendMessageToPeer(fmt.Sprintf("Я тебя узнал, %s, но запомнить не вышло. :(\n"+
+					"Давай в другой раз.", userInfo.Username), message.PeerID)
+				if err != nil {
+					logger.Warnf("can not send update sorry message: %v", err)
+				}
+				continue
 			}
-			continue
-		}
 
-		err = SendMessageToPeer(fmt.Sprintf("Ну всё, я тебя запомнил, %s!", userInfo.Username), message.PeerID)
-		if err != nil {
-			logger.Warnf("can not send sorry message")
+			err = SendMessageToPeer(fmt.Sprintf("Ну всё, я тебя запомнил, %s!\n"+
+				"(\"stop %s\" чтобы отключится)", userInfo.Username, secret), message.PeerID)
+			if err != nil {
+				logger.Warnf("can not send sorry message")
+			}
+		} else if command == "stop" {
+			if err = DisconnectPeerToUser(userInfo.ID, message.PeerID); err != nil {
+				logger.Warnf("can not remove userID peer information: %v", err)
+				err = SendMessageToPeer(fmt.Sprintf("Ты такой классный, %s. У меня не получается тебя забыть. :(\n"+
+					"Давай в другой раз.", userInfo.Username), message.PeerID)
+				if err != nil {
+					logger.Warnf("can not send stop update sorry message: %v", err)
+				}
+				continue
+			}
+
+			err = SendMessageToPeer(fmt.Sprintf("Вот мы и остались друзьями, %s!\n"+
+				"(\"connect %s\" чтобы получать уведомления снова)", userInfo.Username, secret), message.PeerID)
+			if err != nil {
+				logger.Warnf("can not send sorry message")
+			}
 		}
 	}
 }
