@@ -130,6 +130,7 @@ func DisconnectPeerToUser(userID, peerID int64) error {
 	return nil
 }
 
+// SendMessageToPeer отправка сообщения напрямую в peer
 func SendMessageToPeer(message string, peer int64) error {
 	_, err := notifyVKBot.MessagesSend(&vk.MessagesSendParams{
 		PeerID:   peer,
@@ -152,6 +153,7 @@ func SendMessageToUser(message string, userID int64) {
 		return
 	}
 
+	// TODO: на самом деле можно в одном запросе к серверу указать список всех, кто получит сообщение.
 	wg := &sync.WaitGroup{}
 	for peer := range peers.Peers {
 		wg.Add(1)
@@ -165,6 +167,7 @@ func SendMessageToUser(message string, userID int64) {
 	wg.Wait()
 }
 
+// ProcessMessageForVK обработка ProcessMessageForVKообщения, подстановка в шаблон для вк
 func ProcessMessageForVK(message *HubMessage) {
 	switch message.Type {
 	case "match":
