@@ -8,6 +8,7 @@ require (
 	github.com/gorilla/mux v1.7.1
 	github.com/gorilla/websocket v1.4.0
 	github.com/hashicorp/consul/api v1.1.0
+	github.com/mailru/easyjson v0.0.0-20190403194419-1ea4449da983
 	github.com/pkg/errors v0.8.1
 	github.com/sirupsen/logrus v1.4.1
 	google.golang.org/grpc v1.20.1

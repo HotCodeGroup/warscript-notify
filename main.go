@@ -10,6 +10,7 @@ import (
 
 	"github.com/gorilla/mux"
 
+	"github.com/HotCodeGroup/warscript-notify/jmodels"
 	"github.com/HotCodeGroup/warscript-utils/balancer"
 	"github.com/HotCodeGroup/warscript-utils/logging"
 	"github.com/HotCodeGroup/warscript-utils/middlewares"
@@ -27,8 +28,8 @@ var logger *logrus.Logger
 //nolint: gocyclo
 func main() {
 	h = &hub{
-		sessions:   make(map[int64]map[string]chan *HubMessage),
-		broadcast:  make(chan *HubMessage),
+		sessions:   make(map[int64]map[string]chan *jmodels.HubMessage),
+		broadcast:  make(chan *jmodels.HubMessage),
 		register:   make(chan *HubClient),
 		unregister: make(chan *HubClient),
 	}
