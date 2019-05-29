@@ -183,7 +183,7 @@ func ProcessMessageForVK(message *jmodels.HubMessage) {
 		}
 
 		SendMessageToUser(fmt.Sprintf("%s\nВ новом сражении твой бот #%d набрал %d очков.\n"+
-			"Настало время посмотреть реплей: http://89.208.198.192/pong/matches/%d",
+			"Настало время посмотреть реплей: https://warscript.tech/pong/matches/%d",
 			verdict, msgBody.BotID, msgBody.Diff, msgBody.MatchID), message.AuthorID)
 	case "verify":
 		msgBody := &jmodels.NotifyVerifyMessage{}
@@ -199,7 +199,7 @@ func ProcessMessageForVK(message *jmodels.HubMessage) {
 		}
 
 		SendMessageToUser(fmt.Sprintf("%s\nТвой бот #%d%sпрошел тестрирование.\n"+
-			"Настало время посмотреть реплей: http://89.208.198.192/pong/matches/%d",
+			"Настало время посмотреть реплей: https://warscript.tech/pong/matches/%d",
 			verdict, msgBody.BotID, not, msgBody.MatchID), message.AuthorID)
 	}
 }
