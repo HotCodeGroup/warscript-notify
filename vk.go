@@ -318,6 +318,10 @@ func ProcessVKEvents(events vk.EventsChannel) {
 				GameSlug: "",
 				Body:     body,
 			}
+			err = SendMessageToPeer("Передам всем твоё сообщение!", message.PeerID)
+			if err != nil {
+				logger.Warnf("can not send stop info sorry message: %v", err)
+			}
 		}
 	}
 }
