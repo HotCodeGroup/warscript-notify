@@ -20,6 +20,18 @@ import (
 var (
 	connectCommand = "connect"
 	stopCommand    = "stop"
+
+	adminInfoCommand  = "info"
+	adminAlertCommand = "alert"
+)
+
+var (
+	awailbleCommands = map[string]struct{}{
+		"connect": {},
+		"stop":    {},
+		"info":    {},
+		"alert":   {},
+	}
 )
 
 // UserNotifyInfo информация, которая хранится в Redis
@@ -220,15 +232,20 @@ func ProcessVKEvents(events vk.EventsChannel) {
 			continue
 		}
 
-		command := ""
-		secret := ""
 		words := strings.Split(message.Text, " ")
 
+		command := ""
+		secret := ""
+		var args []string
 		if len(words) == 1 {
 			command, secret = connectCommand, words[0]
-		} else if len(words) == 2 && (words[0] == connectCommand || words[0] == stopCommand) {
+		} else if len(words) == 2 {
 			command, secret = words[0], words[1]
-		} else {
+		} else if len(words) > 2 {
+			command, secret, args = words[0], words[1], words[2:]
+		}
+
+		if _, ok := awailbleCommands[command]; !ok {
 			err = SendMessageToPeer("Первый раз слышу такую команду. ¯\\_(ツ)_/¯", message.PeerID)
 			if err != nil {
 				logger.Warnf("can not send get user sorry message: %v", err)
@@ -278,6 +295,28 @@ func ProcessVKEvents(events vk.EventsChannel) {
 				"(\"%s %s\" чтобы получать уведомления снова)", userInfo.Username, connectCommand, secret), message.PeerID)
 			if err != nil {
 				logger.Warnf("can not send sorry message")
+			}
+		} else if command == adminInfoCommand || command == adminAlertCommand { // и ещё админ
+			// это слишком редкий метод, чтобы париться с оптимизацией
+			msg := &jmodels.NotifyInfoMessage{
+				Message: strings.Join(args, " "),
+			}
+
+			body, err := json.Marshal(msg)
+			if err != nil {
+				logger.Warnf("can not marshal message: %v", err)
+				err = SendMessageToPeer("Не удаётся отправить сообщение :(", message.PeerID)
+				if err != nil {
+					logger.Warnf("can not send stop info sorry message: %v", err)
+				}
+				continue
+			}
+
+			h.broadcast <- &jmodels.HubMessage{
+				Type:     command,
+				AuthorID: 0,
+				GameSlug: "",
+				Body:     body,
 			}
 		}
 	}

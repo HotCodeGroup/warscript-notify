@@ -27,3 +27,8 @@ type NotifyVerifyMessage struct {
 	MatchID  int64  `json:"match_id"`
 	Veryfied bool   `json:"veryfied"`
 }
+
+// NotifyInfoMessage сообщение для сервиса нотификации от админа
+type NotifyInfoMessage struct {
+	Message string `json:"message"`
+}

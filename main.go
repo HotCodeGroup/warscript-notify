@@ -15,6 +15,7 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/HotCodeGroup/warscript-notify/jmodels"
+
 	"github.com/HotCodeGroup/warscript-utils/balancer"
 	"github.com/HotCodeGroup/warscript-utils/logging"
 	"github.com/HotCodeGroup/warscript-utils/middlewares"
