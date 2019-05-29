@@ -9,6 +9,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/HotCodeGroup/warscript-notify/jmodels"
 	"github.com/HotCodeGroup/warscript-utils/models"
 	"github.com/go-redis/redis"
 	"github.com/pkg/errors"
@@ -168,10 +169,10 @@ func SendMessageToUser(message string, userID int64) {
 }
 
 // ProcessMessageForVK обработка ProcessMessageForVKообщения, подстановка в шаблон для вк
-func ProcessMessageForVK(message *HubMessage) {
+func ProcessMessageForVK(message *jmodels.HubMessage) {
 	switch message.Type {
 	case "match":
-		msgBody := &NotifyMatchMessage{}
+		msgBody := &jmodels.NotifyMatchMessage{}
 		if err := json.Unmarshal(message.Body, msgBody); err != nil {
 			logger.Warnf("can not unmarshal notify body to %d: %v", message.AuthorID, err)
 		}
@@ -185,7 +186,7 @@ func ProcessMessageForVK(message *HubMessage) {
 			"Настало время посмотреть реплей: http://89.208.198.192/pong/matches/%d",
 			verdict, msgBody.BotID, msgBody.Diff, msgBody.MatchID), message.AuthorID)
 	case "verify":
-		msgBody := &NotifyVerifyMessage{}
+		msgBody := &jmodels.NotifyVerifyMessage{}
 		if err := json.Unmarshal(message.Body, msgBody); err != nil {
 			logger.Warnf("can not unmarshal notify body to %d: %v", message.AuthorID, err)
 		}
