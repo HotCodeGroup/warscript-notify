@@ -3,6 +3,8 @@ FROM golang:1.12 AS build
 COPY . /warscript-notify
 WORKDIR /warscript-notify
 
+
+RUN ca-certificates && update-ca-certificates 2>/dev/null || true
 RUN go build .
 
 FROM alpine:latest
