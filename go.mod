@@ -4,7 +4,7 @@ go 1.12
 
 require (
 	github.com/GDVFox/vkbot-go v0.0.0-20190204162326-81f90eb179b2
-	github.com/HotCodeGroup/warscript-utils v0.0.0-20190521110249-bd01ffff9945
+	github.com/HotCodeGroup/warscript-utils v0.0.0-20190525134135-f9addc69c0b4
 	github.com/PuerkitoBio/goquery v1.5.0 // indirect
 	github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc // indirect
 	github.com/alecthomas/units v0.0.0-20151022065526-2efee857e7cf // indirect

@@ -8,6 +8,8 @@ github.com/HotCodeGroup/warscript-utils v0.0.0-20190521082249-958f8aa86c74 h1:15
 github.com/HotCodeGroup/warscript-utils v0.0.0-20190521082249-958f8aa86c74/go.mod h1:3wXifW8LqBmbXZkEu1LvycQ0RzCOrjHSYgQejGw0BvY=
 github.com/HotCodeGroup/warscript-utils v0.0.0-20190521110249-bd01ffff9945 h1:7Gs6S7TP0fHhsJiDkZGlzLejbIsbTDQkMDCBgBifH6w=
 github.com/HotCodeGroup/warscript-utils v0.0.0-20190521110249-bd01ffff9945/go.mod h1:3wXifW8LqBmbXZkEu1LvycQ0RzCOrjHSYgQejGw0BvY=
+github.com/HotCodeGroup/warscript-utils v0.0.0-20190525134135-f9addc69c0b4 h1:Tt0IwQ2oHLJ2kMn8zy9DTiqiNR25y8BDK77uqDugoFk=
+github.com/HotCodeGroup/warscript-utils v0.0.0-20190525134135-f9addc69c0b4/go.mod h1:J9NmJnSgvTmXoFRZDmyQxbxahaEM9qgtakUa5/GCr24=
 github.com/PuerkitoBio/goquery v1.5.0 h1:uGvmFXOA73IKluu/F84Xd1tt/z07GYm8X49XKHP7EJk=
 github.com/PuerkitoBio/goquery v1.5.0/go.mod h1:qD2PgZ9lccMbQlc7eEOjaeRlFQON7xY8kdmcsrnKqMg=
 github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc h1:cAKDfWh5VpdgMhJosfJnn5/FoN2SRZ4p7fJNX58YPaU=
