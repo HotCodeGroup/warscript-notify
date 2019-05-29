@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 
+	"github.com/HotCodeGroup/warscript-notify/jmodels"
 	"github.com/HotCodeGroup/warscript-utils/models"
 )
 
@@ -12,7 +13,7 @@ type NotifyManager struct{}
 // SendNotify отправлка уведомления пользователю, полученного из другого сервера
 func (gm *NotifyManager) SendNotify(ctx context.Context, m *models.Message) (*models.Empty, error) {
 
-	h.broadcast <- &HubMessage{
+	h.broadcast <- &jmodels.HubMessage{
 		Type:     m.Type,
 		AuthorID: m.User,
 		GameSlug: m.Game,

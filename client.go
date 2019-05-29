@@ -3,6 +3,7 @@ package main
 import (
 	"time"
 
+	"github.com/HotCodeGroup/warscript-notify/jmodels"
 	"github.com/gorilla/websocket"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -20,8 +21,8 @@ type HubClient struct {
 
 	h       *hub
 	conn    *websocket.Conn
-	send    chan *HubMessage
-	filters []func(*HubMessage) bool
+	send    chan *jmodels.HubMessage
+	filters []func(*jmodels.HubMessage) bool
 }
 
 // WaitForClose отключает клиента от хаба, при закрытии ws

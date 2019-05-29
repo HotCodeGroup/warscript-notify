@@ -14,7 +14,11 @@ require (
 	github.com/gorilla/mux v1.7.1
 	github.com/gorilla/websocket v1.4.0
 	github.com/hashicorp/consul/api v1.1.0
+<<<<<<< HEAD
 	github.com/hashicorp/vault/api v1.0.2
+=======
+	github.com/mailru/easyjson v0.0.0-20190403194419-1ea4449da983
+>>>>>>> d51673a0d152b4991e7fff82a9c629441c5b3ddc
 	github.com/pkg/errors v0.8.1
 	github.com/prometheus/common v0.0.0-20181126121408-4724e9255275
 	github.com/sirupsen/logrus v1.4.1

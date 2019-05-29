@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 
+	"github.com/HotCodeGroup/warscript-notify/jmodels"
 	"github.com/HotCodeGroup/warscript-utils/middlewares"
 	"github.com/HotCodeGroup/warscript-utils/models"
 	"github.com/HotCodeGroup/warscript-utils/utils"
@@ -51,8 +52,8 @@ func OpenWS(w http.ResponseWriter, r *http.Request) {
 
 		h:       h,
 		conn:    c,
-		send:    make(chan *HubMessage),
-		filters: make([]func(*HubMessage) bool, 0, 0),
+		send:    make(chan *jmodels.HubMessage),
+		filters: make([]func(*jmodels.HubMessage) bool, 0, 0),
 	}
 	verifyClient.h.register <- verifyClient
 

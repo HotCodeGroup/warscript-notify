@@ -1,19 +1,21 @@
 package main
 
+import "github.com/HotCodeGroup/warscript-notify/jmodels"
+
 var h *hub
 
 type hub struct {
 	// UserID -> GameID -> SessionID -> byte channel
-	sessions map[int64]map[string]chan *HubMessage
+	sessions map[int64]map[string]chan *jmodels.HubMessage
 
-	broadcast  chan *HubMessage
+	broadcast  chan *jmodels.HubMessage
 	register   chan *HubClient
 	unregister chan *HubClient
 }
 
 func (h *hub) registerClient(client *HubClient) {
 	if _, ok := h.sessions[client.UserID]; !ok {
-		h.sessions[client.UserID] = make(map[string]chan *HubMessage)
+		h.sessions[client.UserID] = make(map[string]chan *jmodels.HubMessage)
 	}
 
 	h.sessions[client.UserID][client.SessionID] = client.send
