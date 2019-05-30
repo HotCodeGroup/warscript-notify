@@ -30,6 +30,7 @@ import (
 	vaultapi "github.com/hashicorp/vault/api"
 )
 
+var adminKey string
 var rediCli *redis.Client
 var notifyVKBot *vk.VkBot
 var authGPRC models.AuthClient
@@ -86,6 +87,7 @@ func main() {
 		return
 	}
 
+	adminKey = vkConf.Data["admin_key"].(string)
 	groupID, err := strconv.ParseInt(vkConf.Data["group_id"].(string), 10, 64)
 	if err != nil {
 		logger.Errorf("can not parse vk bot group ID: %s", err)

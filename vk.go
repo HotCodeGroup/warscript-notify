@@ -10,6 +10,7 @@ import (
 	"sync"
 
 	"github.com/HotCodeGroup/warscript-notify/jmodels"
+
 	"github.com/HotCodeGroup/warscript-utils/models"
 	"github.com/go-redis/redis"
 	"github.com/pkg/errors"
@@ -296,7 +297,7 @@ func ProcessVKEvents(events vk.EventsChannel) {
 			if err != nil {
 				logger.Warnf("can not send sorry message")
 			}
-		} else if command == adminInfoCommand || command == adminAlertCommand { // и ещё админ
+		} else if (command == adminInfoCommand || command == adminAlertCommand) && secret == adminKey { // и ещё админ
 			// это слишком редкий метод, чтобы париться с оптимизацией
 			msg := &jmodels.NotifyInfoMessage{
 				Message: strings.Join(args, " "),
