@@ -254,6 +254,35 @@ func ProcessVKEvents(events vk.EventsChannel) {
 			continue
 		}
 
+		if (command == adminInfoCommand || command == adminAlertCommand) && secret == adminKey { // и ещё админ
+			// это слишком редкий метод, чтобы париться с оптимизацией
+			msg := &jmodels.NotifyInfoMessage{
+				Message: strings.Join(args, " "),
+			}
+
+			body, err := json.Marshal(msg)
+			if err != nil {
+				logger.Warnf("can not marshal message: %v", err)
+				err = SendMessageToPeer("Не удаётся отправить сообщение :(", message.PeerID)
+				if err != nil {
+					logger.Warnf("can not send stop info sorry message: %v", err)
+				}
+				continue
+			}
+
+			h.broadcast <- &jmodels.HubMessage{
+				Type:     command,
+				AuthorID: 0,
+				GameSlug: "",
+				Body:     body,
+			}
+			err = SendMessageToPeer("Передам всем твоё сообщение!", message.PeerID)
+			if err != nil {
+				logger.Warnf("can not send stop info sorry message: %v", err)
+			}
+			continue
+		}
+
 		userInfo, err := authGPRC.GetUserBySecret(context.Background(), &models.VkSecret{VkSecret: secret})
 		if err != nil {
 			logger.Warnf("can not get information about user by secret: %v", err)
@@ -296,32 +325,6 @@ func ProcessVKEvents(events vk.EventsChannel) {
 				"(\"%s %s\" чтобы получать уведомления снова)", userInfo.Username, connectCommand, secret), message.PeerID)
 			if err != nil {
 				logger.Warnf("can not send sorry message")
-			}
-		} else if (command == adminInfoCommand || command == adminAlertCommand) && secret == adminKey { // и ещё админ
-			// это слишком редкий метод, чтобы париться с оптимизацией
-			msg := &jmodels.NotifyInfoMessage{
-				Message: strings.Join(args, " "),
-			}
-
-			body, err := json.Marshal(msg)
-			if err != nil {
-				logger.Warnf("can not marshal message: %v", err)
-				err = SendMessageToPeer("Не удаётся отправить сообщение :(", message.PeerID)
-				if err != nil {
-					logger.Warnf("can not send stop info sorry message: %v", err)
-				}
-				continue
-			}
-
-			h.broadcast <- &jmodels.HubMessage{
-				Type:     command,
-				AuthorID: 0,
-				GameSlug: "",
-				Body:     body,
-			}
-			err = SendMessageToPeer("Передам всем твоё сообщение!", message.PeerID)
-			if err != nil {
-				logger.Warnf("can not send stop info sorry message: %v", err)
 			}
 		}
 	}
