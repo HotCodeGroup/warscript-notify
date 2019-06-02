@@ -202,7 +202,7 @@ func main() {
 	// стартуем http
 	r := mux.NewRouter().PathPrefix("/v1").Subrouter()
 
-	r.HandleFunc("/connect", middlewares.WithAuthentication(OpenWS, logger, authGPRC)).Methods("GET")
+	r.HandleFunc("/connect", OpenWS).Methods("GET")
 	http.Handle("/", middlewares.RecoverMiddleware(middlewares.AccessLogMiddleware(r, logger), logger))
 
 	logger.Infof("Notify HTTP service successfully started at port %d", httpPort)

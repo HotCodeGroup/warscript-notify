@@ -29,10 +29,13 @@ func OpenWS(w http.ResponseWriter, r *http.Request) {
 	logger := utils.GetLogger(r, logger, "OpenWS")
 	errWriter := utils.NewErrorResponseWriter(w, logger)
 
-	info := SessionInfo(r)
-	if info == nil {
-		errWriter.WriteWarn(http.StatusUnauthorized, errors.New("session info is not presented"))
-		return
+	var sessInfo *models.SessionPayload
+	cookie, err := r.Cookie("JSESSIONID")
+	if err == nil && cookie != nil {
+		sessInfo, err = authGPRC.GetSessionInfo(r.Context(), &models.SessionToken{Token: cookie.Value})
+		if err != nil {
+			sessInfo = nil
+		}
 	}
 
 	upgrader := websocket.Upgrader{
@@ -46,10 +49,15 @@ func OpenWS(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var userID int64
+	if sessInfo != nil {
+		userID = sessInfo.ID
+	}
+
 	sessionID := uuid.New().String()
 	verifyClient := &HubClient{
 		SessionID: sessionID,
-		UserID:    info.ID,
+		UserID:    userID,
 
 		h:       h,
 		conn:    c,
