@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net"
@@ -9,6 +10,7 @@ import (
 	"os/signal"
 	"strconv"
 	"syscall"
+	"time"
 
 	"github.com/go-redis/redis"
 
@@ -181,12 +183,34 @@ func main() {
 		}
 	}()
 
+	// TODO: убрать, когда починим
+	alertTicker := time.NewTicker(time.Minute)
+	go func() {
+		for range alertTicker.C {
+			msg := &jmodels.NotifyInfoMessage{
+				Message: "Наша БД переполнилась, а потом на неё упал метеорит. 💥\n" +
+					"Наши лучшие инженеры уже ищут решение этой проблемы!\n" +
+					"По всем вопросам: https://vk.com/warscript",
+			}
+
+			body, _ := json.Marshal(msg)
+			h.broadcast <- &jmodels.HubMessage{
+				Type:     "alert",
+				AuthorID: 0,
+				GameSlug: "",
+				Body:     body,
+			}
+		}
+	}()
+	defer alertTicker.Stop()
+
 	signals := make(chan os.Signal, 1)
 	signal.Notify(signals, os.Kill, os.Interrupt, syscall.SIGTERM)
 
 	go func() {
 		<-signals
 
+		alertTicker.Stop()
 		// вырубили http
 		deregisterService(consul, httpServiceID)
 		// вырубили grpc
