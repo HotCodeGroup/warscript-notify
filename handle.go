@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/HotCodeGroup/warscript-notify/jmodels"
@@ -69,18 +68,4 @@ func OpenWS(w http.ResponseWriter, r *http.Request) {
 
 	go verifyClient.WriteStatusUpdates()
 	go verifyClient.WaitForClose()
-
-	msg := &jmodels.NotifyInfoMessage{
-		Message: "Наша БД переполнилась, а потом на неё упал метеорит. 💥\n" +
-			"Наши лучшие инженеры уже ищут решение этой проблемы!\n" +
-			"По всем вопросам: https://vk.com/warscript",
-	}
-
-	body, _ := json.Marshal(msg)
-	h.broadcast <- &jmodels.HubMessage{
-		Type:     "alert",
-		AuthorID: 0,
-		GameSlug: "",
-		Body:     body,
-	}
 }
