@@ -189,6 +189,7 @@ func main() {
 
 		// вырубили http
 		deregisterService(consul, httpServiceID)
+
 		// вырубили grpc
 		deregisterService(consul, grpcServiceID)
 		// отрубили базули
